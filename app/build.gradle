@@ -40,16 +40,26 @@ task jacocoReport(type: JacocoReport, dependsOn: 'connectedAndroidTestDebug') {
             ]
     )
 
-    sourceDirectories = files('src/main/java')
+    classDirectories = classDirectories + fileTree(
+            dir: '../mylibrary/build/intermediates/classes/debug',
+            excludes: [
+                    '**/R*.class',
+                    '**/BuildConfig*'
+            ]
+    )
+
+    sourceDirectories = fileTree(dir: 'src/main/java') + fileTree(dir: '../mylibrary/src/main/java')
     executionData = files('build/outputs/code-coverage/connected/coverage.ec')
 
-//    doFirst {
-//        files('build/intermediates/classes/debug').getFiles().each { file ->
-//            if (file.name.contains('$$')) {
-//                file.renameTo(file.path.replace('$$', '$'))
-//            }
-//        }
-//    }
+    // What's in there?
+    println("---------- Discovered files -----------")
+    classDirectories.each {File file ->
+        println file.absolutePath
+    }
+    sourceDirectories.each {File file ->
+        println file.absolutePath
+    }
+    println("---------- Discovered files END -------")
 }
 
 dependencies {
